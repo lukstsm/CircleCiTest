@@ -10,6 +10,7 @@ jobs:
       - image: circleci/android:api-25-alpha
     environment:
       JVM_OPTS: -Xmx3200m
+      GIT_COMMIT_DESC: git log --format=oneline -n 1 $CIRCLE_SHA1
     steps:
       - checkout
 
@@ -35,6 +36,10 @@ jobs:
 
       - store_test_results:
           path: app/build/test-results
+
+      - run:
+          name: Upload to HockeyApp
+          command: 'curl -F "status=2" -F "notify=1" -F "notes=$GIT_COMMIT_DESC" -F "notes_type=0" -F "ipa=@app/build/outputs/apk/app-debug.apk" -H "X-HockeyAppToken:d5632001b8484bebb2310c3e4fcc0042" https://rink.hockeyapp.net/api/2/apps/upload'
 
 
 
