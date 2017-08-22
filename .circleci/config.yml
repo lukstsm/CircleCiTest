@@ -6,11 +6,14 @@ version: 2
 jobs:
   build:
     working_directory: ~/code
+
     docker:
       - image: circleci/android:api-25-alpha
+
     environment:
       JVM_OPTS: -Xmx3200m
       GIT_COMMIT_DESC: git log --format=oneline -n 1 $CIRCLE_SHA1
+
     steps:
       - checkout
 
@@ -18,7 +21,7 @@ jobs:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
 
       - run:
-          name: Download Dependencies
+          name: Download Project Dependencies
           command: ./gradlew androidDependencies
 
       - save_cache:
@@ -41,9 +44,39 @@ jobs:
       - store_test_results:
           path: app/build/test-results
 
-      - run:
-          name: Upload to HockeyApp
-          command: 'curl -F "status=2" -F "notify=1" -F "notes=$GIT_COMMIT_DESC" -F "notes_type=0" -F "ipa=@app/build/outputs/apk/app-debug.apk" -H "X-HockeyAppToken:d5632001b8484bebb2310c3e4fcc0042" https://rink.hockeyapp.net/api/2/apps/upload'
+  appium:
+      docker:
+        - image: python:3.6.0
 
+      steps:
+        - checkout
 
+        - run:
+            name: Install Appium Dependencies
+            command: |
+              sudo pip install -U selenium
+              brew install node
+              npm install -g appium
+              brew install awscli
+              pwd
+              ls -la
+        #              pip install boto3==1.4.4 requests==2.13.0
+
+        - run:
+            name: Package Python Appium Tests
+            command: ./package_tests.sh
+
+#  upload:_
+#      - run:
+#          name: Upload to HockeyApp
+#          command: 'curl -F "status=2" -F "notify=1" -F "notes=$GIT_COMMIT_DESC" -F "notes_type=0" -F "ipa=@app/build/outputs/apk/app-debug.apk" -H "X-HockeyAppToken:d5632001b8484bebb2310c3e4fcc0042" https://rink.hockeyapp.net/api/2/apps/upload'
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - appium:
+          requires:
+            - build
 
