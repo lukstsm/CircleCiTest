@@ -5,8 +5,6 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/code
-
     docker:
       - image: circleci/android:api-25-alpha
 
@@ -22,7 +20,10 @@ jobs:
 
       - run:
           name: Download Project Dependencies
-          command: ./gradlew androidDependencies
+          command: |
+            pwd
+            ls -la
+            ./gradlew androidDependencies
 
       - save_cache:
           paths:
@@ -44,27 +45,49 @@ jobs:
       - store_test_results:
           path: app/build/test-results
 
+      - run:
+          name: Move APK To Workspace
+          command: |
+            mkdir -p workspace/apks
+            mv app/build/outputs/apk/app-debug.apk workspace/apks
+
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - apks
+
   appium:
       docker:
-        - image: circleci/python:3.6.1
+        - image: circleci/python:2.7
 
       steps:
+        - attach_workspace:
+            at: workspace
+
         - checkout
 
         - run:
             name: Install Appium Dependencies
             command: |
+              ls -la ./build
               sudo pip install -U selenium
-              brew install node
-              npm install -g appium
-              brew install awscli
-              pwd
-              ls -la
-        #              pip install boto3==1.4.4 requests==2.13.0
+
+              curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
+              sudo bash nodesource_setup.sh
+              sudo apt-get install nodejs
+
+              sudo npm install -g appium
+              pip install awscli --upgrade --user
+              sudo pip install boto3==1.4.4 requests==2.13.0
 
         - run:
             name: Package Python Appium Tests
             command: ./package_tests.sh
+
+        - run:
+            name: Run AWS Device Farm Tests
+            command: python aws_device_farm.py
+
 
 #  upload:_
 #      - run:
