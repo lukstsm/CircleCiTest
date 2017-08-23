@@ -20,10 +20,7 @@ jobs:
 
       - run:
           name: Download Project Dependencies
-          command: |
-            pwd
-            ls -la
-            ./gradlew androidDependencies
+          command: ./gradlew androidDependencies
 
       - save_cache:
           paths:
@@ -69,7 +66,6 @@ jobs:
         - run:
             name: Install Appium Dependencies
             command: |
-              ls -la ./build
               sudo pip install -U selenium
 
               curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
