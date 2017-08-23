@@ -62,7 +62,7 @@ jobs:
 
       steps:
         - attach_workspace:
-            at: workspace
+            at: /tmp/workspace
 
         - checkout
 

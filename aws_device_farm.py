@@ -130,7 +130,7 @@ if __name__ == '__main__':
         project_arn,
         'ANDROID_APP',
         "Build_" + os.environ["CIRCLE_BUILD_NUM"] + '_CircleCiTest.apk',
-        'workspace/apks/app-debug.apk',
+        '/tmp/workspace/apks/app-debug.apk',
     )
     wait_for_upload(app_arn)
     logger.info('App: %s' % app_arn)
