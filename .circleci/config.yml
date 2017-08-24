@@ -98,12 +98,13 @@ jobs:
               pip list
               echo "<----pip list--"
 
-              curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
-              sudo bash nodesource_setup.sh
-              sudo apt-get install nodejs
+              #curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
+              #sudo bash nodesource_setup.sh
+              #sudo apt-get install nodejs
 
-              sudo npm install -g appium
-              bin/pip install awscli --upgrade
+              #sudo npm install -g appium
+              #bin/pip install awscli --upgrade
+              pip install Appium-Python-Client
               #bin/pip install boto3
               bin/pip install boto3==1.4.4 requests==2.13.0
 
@@ -123,6 +124,8 @@ jobs:
               cd virtual_workspace
               source bin/activate
               ../package_tests.sh
+              cat requirements.txt
+
 
         - run:
             name: Run AWS Device Farm Tests

@@ -10,7 +10,7 @@ import requests
 
 REGION = 'us-west-2'
 PROJECT_NAME = 'CircleCiTest'
-DEVICE_POOL_NAME = 'CircleCiTestPool'
+DEVICE_POOL_NAME = 'S6'
 RUN_TIMEOUT_SECONDS = 60 * 20
 WEB_URL_TEMPLATE = 'https://us-west-2.console.aws.amazon.com/devicefarm/home#/projects/%s/runs/%s'
 
