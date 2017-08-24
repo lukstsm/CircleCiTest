@@ -66,29 +66,78 @@ jobs:
         - run:
             name: Install Appium Dependencies
             command: |
-              sudo pip install -U selenium
+              virtualenv virtual_workspace
+
+              mkdir virtual_workspace/tests
+              cp tests/* virtual_workspace/tests
+
+              mkdir virtual_workspace/.aws
+              echo $$AWS_ACCESS_KEY_ID
+              echo "[default]" >> virtual_workspace/.aws/credentials
+              echo "aws_access_key_id=$AWS_ACCESS_KEY_ID" >> virtual_workspace/.aws/credentials
+              echo "aws_secret_access_key=$AWS_SECRET_ACCESS_KEY" >> virtual_workspace/.aws/credentials
+              cat virtual_workspace/.aws/credentials
+
+              cd virtual_workspace
+              source bin/activate
+              ls -la bin/
+
+              echo "----pip list-->"
+              pip list
+              echo "<----pip list--"
+
+              bin/pip install pytest
+
+              echo "----pip list-->"
+              pip list
+              echo "<----pip list--"
+
+              bin/pip install -U selenium
+
+              echo "----pip list-->"
+              pip list
+              echo "<----pip list--"
 
               curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
               sudo bash nodesource_setup.sh
               sudo apt-get install nodejs
 
               sudo npm install -g appium
-              pip install awscli --upgrade --user
-              sudo pip install boto3==1.4.4 requests==2.13.0
+              bin/pip install awscli --upgrade
+              #bin/pip install boto3
+              bin/pip install boto3==1.4.4 requests==2.13.0
+
+              echo "----pip list--"
+              pip list
+              echo "----pip list--"
+              source bin/activate
+              ls -la bin/
+
+              py.test --version
+              python --version
+              bin/python --version
 
         - run:
             name: Package Python Appium Tests
-            command: ./package_tests.sh
+            command: |
+              cd virtual_workspace
+              source bin/activate
+              ../package_tests.sh
 
         - run:
             name: Run AWS Device Farm Tests
-            command: python aws_device_farm.py
+            command: |
+              cd virtual_workspace
+              source bin/activate
+              python ../aws_device_farm.py
 
 
 #  upload:_
 #      - run:
 #          name: Upload to HockeyApp
-#          command: 'curl -F "status=2" -F "notify=1" -F "notes=$GIT_COMMIT_DESC" -F "notes_type=0" -F "ipa=@app/build/outputs/apk/app-debug.apk" -H "X-HockeyAppToken:d5632001b8484bebb2310c3e4fcc0042" https://rink.hockeyapp.net/api/2/apps/upload'
+#          command: |
+#               export GIT_COMMIT_DESC=$(git log --format=oneline -n 1)
+#               'curl -F "status=2" -F "notify=1" -F "notes=$GIT_COMMIT_DESC" -F "notes_type=0" -F "ipa=@app/build/outputs/apk/app-debug.apk" -H "X-HockeyAppToken:d5632001b8484bebb2310c3e4fcc0042" https://rink.hockeyapp.net/api/2/apps/upload'
 
 workflows:
   version: 2

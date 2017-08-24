@@ -10,5 +10,5 @@ from base_test import BaseTest
 
 class SimpleAndroidTests(BaseTest):
     def test_find_elements(self):
-        el = self.driver.find_element_by_xpath('//android.widget.TextView[contains(@text, "Text")]')
+        el = self.driver.find_element_by_xpath('//android.widget.TextView[contains(@text, "Hello World")]')
         return el.is_displayed()
