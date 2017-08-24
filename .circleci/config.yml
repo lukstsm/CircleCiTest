@@ -98,12 +98,17 @@ jobs:
               source bin/activate
               python ../aws_device_farm.py
 
-  upload:_
-      - run:
-          name: Upload to HockeyApp
-          command: |
-               export GIT_COMMIT_DESC=$(git log --format=oneline -n 1)
-               'curl -F "status=2" -F "notify=1" -F "notes=$GIT_COMMIT_DESC" -F "notes_type=0" -F "ipa=@app/build/outputs/apk/app-debug.apk" -H "X-HockeyAppToken:d5632001b8484bebb2310c3e4fcc0042" https://rink.hockeyapp.net/api/2/apps/upload'
+  upload:
+      docker:
+        # Required, any image will do
+        - image: circleci/python:2.7
+
+      steps:
+        - run:
+            name: Upload to HockeyApp
+            command: |
+              export GIT_COMMIT_DESC=$(git log --format=oneline -n 1)
+              'curl -F "status=2" -F "notify=1" -F "notes=$GIT_COMMIT_DESC" -F "notes_type=0" -F "ipa=@app/build/outputs/apk/app-debug.apk" -H "X-HockeyAppToken:d5632001b8484bebb2310c3e4fcc0042" https://rink.hockeyapp.net/api/2/apps/upload'
 
 workflows:
   version: 2
