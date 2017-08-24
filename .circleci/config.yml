@@ -107,11 +107,13 @@ jobs:
         - attach_workspace:
             at: /tmp/workspace
 
+        - checkout
+
         - run:
             name: Upload to HockeyApp
             command: |
               export GIT_COMMIT_DESC=$(git log --format=oneline -n 1)
-              'curl -F "status=2" -F "notify=1" -F "notes=$GIT_COMMIT_DESC" -F "notes_type=0" -F "ipa=@/tmp/workspace/apks/app-debug.apk" -H "X-HockeyAppToken:$HOCKEY_APP_TOKEN" https://rink.hockeyapp.net/api/2/apps/upload'
+              curl -F "status=2" -F "notify=1" -F "notes=$GIT_COMMIT_DESC" -F "notes_type=0" -F "ipa=@/tmp/workspace/apks/app-debug.apk" -H "X-HockeyAppToken:$HOCKEY_APP_TOKEN" https://rink.hockeyapp.net/api/2/apps/upload
 
 workflows:
   version: 2
