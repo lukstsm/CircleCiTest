@@ -77,13 +77,13 @@ def _poll_until(method, arn, get_status_callable, success_statuses, timeout_seco
     while True:
         result = method(arn=arn)
         current_status = get_status_callable(result)
-            #if current_status in success_statuses:
-        return result
-        #logger.info('Waiting for %r status %r to be in %r' % (arn, current_status, success_statuses))
-        #now = time.time()
-        #if now - start > timeout_seconds:
-#raise StopIteration('Time out waiting for %r to be done' % arn)
-#time.sleep(check_every_seconds)
+        if current_status in success_statuses:
+            return result
+        logger.info('Waiting for %r status %r to be in %r' % (arn, current_status, success_statuses))
+        now = time.time()
+        if now - start > timeout_seconds:
+            raise StopIteration('Time out waiting for %r to be done' % arn)
+        time.sleep(check_every_seconds)
 
 
 def wait_for_upload(arn):
