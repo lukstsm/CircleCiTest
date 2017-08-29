@@ -21,8 +21,8 @@ jobs:
       - run:
           name: Download Signing Certification
           command: |
-            curl -O https://raw.githubusercontent.com/lukstsm/CiKey/master/my-release-key.jks
-            cd app && curl -O https://raw.githubusercontent.com/lukstsm/CiKey/master/keystore.properties
+            curl -O https://raw.githubusercontent.com/lukstsm/CiKey/master/keystore.properties
+            cd app && curl -O https://raw.githubusercontent.com/lukstsm/CiKey/master/my-release-key.jks
 
       - run:
           name: Download Project Dependencies
