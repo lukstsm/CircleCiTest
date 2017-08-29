@@ -19,6 +19,12 @@ jobs:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
 
       - run:
+          name: Download Signing Certification
+          command: |
+            curl -O https://raw.githubusercontent.com/lukstsm/CiKey/master/my-release-key.jks
+            cd app && curl -O https://raw.githubusercontent.com/lukstsm/CiKey/master/keystore.properties
+
+      - run:
           name: Download Project Dependencies
           command: ./gradlew androidDependencies
 
@@ -29,7 +35,9 @@ jobs:
 
       - run:
           name: Build App
-          command: ./gradlew assembleDebug
+          command: |
+            ./gradlew assembleDebug
+            ./gradlew assembleRelease
 
       - run:
           name: Run Tests
@@ -46,12 +54,12 @@ jobs:
           name: Move APK To Workspace
           command: |
             mkdir -p workspace/apks
-            mv app/build/outputs/apk/app-debug.apk workspace/apks
+            mv app/build/outputs/apk/*.apk workspace/apks
 
       - persist_to_workspace:
           root: workspace
           paths:
-            - apks/app-debug.apk
+            - apks/*.apk
 
   appium:
       docker:
@@ -114,6 +122,7 @@ jobs:
             command: |
               export GIT_COMMIT_DESC=$(git log --format=oneline -n 1)
               curl -F "status=2" -F "notify=1" -F "notes=$GIT_COMMIT_DESC" -F "notes_type=0" -F "ipa=@/tmp/workspace/apks/app-debug.apk" -H "X-HockeyAppToken:$HOCKEY_APP_TOKEN" https://rink.hockeyapp.net/api/2/apps/upload
+              curl -F "status=2" -F "notify=1" -F "notes=$GIT_COMMIT_DESC" -F "notes_type=0" -F "ipa=@/tmp/workspace/apks/app-release.apk" -H "X-HockeyAppToken:$HOCKEY_APP_TOKEN" https://rink.hockeyapp.net/api/2/apps/upload
 
 workflows:
   version: 2
