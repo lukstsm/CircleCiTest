@@ -40,6 +40,19 @@ jobs:
             ./gradlew assembleRelease
 
       - run:
+          name: PR Debugging
+          command: |
+            echo $CIRCLE_PROJECT_USERNAME
+            echo $CIRCLE_PROJECT_REPONAME
+            echo $CIRCLE_REPOSITORY_URL
+            echo $CIRCLE_BUILD_URL
+            echo $CIRCLE_BRANCH
+            echo $CI_PULL_REQUEST
+            echo $CIRCLE_PR_USERNAME
+            echo $CIRCLE_PR_REPONAME
+            echo $CIRCLE_PR_NUMBER
+
+      - run:
           name: Run Tests
           command: ./gradlew test
 
