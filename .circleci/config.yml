@@ -89,6 +89,7 @@ jobs:
             command: |
               virtualenv virtual_workspace
 
+              mkdir virtual_workspace/test-results
               mkdir virtual_workspace/tests
               cp tests/* virtual_workspace/tests
 
@@ -118,6 +119,9 @@ jobs:
               cd virtual_workspace
               source bin/activate
               python ../aws_device_farm.py
+
+        - store_test_results:
+            path: virtual_workspace/test-results
 
   upload:
       docker:

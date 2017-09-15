@@ -118,6 +118,18 @@ def get_run_web_url(project_arn, test_run_arn):
         test_run_arid,
     )
 
+def get_appium_results_url(test_package_arn):
+    response = device_farm.list_artifacts(arn=test_package_arn, type='FILE')
+    for artifact in response['artifacts']:
+        if artifact['type'] == 'APPIUM_PYTHON_XML_OUTPUT':
+            return artifact['url']
+
+def save_remote_file(url, fileName):
+    response = requests.get(url, stream=True)
+    with open(fileName, 'wb') as handle:
+        for block in response.iter_content(1024):
+            handle.write(block)
+
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(message)s')
@@ -154,3 +166,8 @@ if __name__ == '__main__':
     logger.info('View scheduled run at %s' % get_run_web_url(project_arn, test_run_arn))
     success = wait_for_run(test_run_arn)
     logger.info('Success')
+
+    logger.info('Retrieving Appium results xml for ci storage...')
+    appium_results_url = get_appium_results_url(test_run_arn)
+    save_remote_file(appium_results_url, 'appium_results.xml')
+    logger.info('Done')
