@@ -120,6 +120,12 @@ jobs:
               source bin/activate
               python ../aws_device_farm.py
 
+        - run:
+            name: Debug test artifacts
+            command: |
+              ls virtual_workspace/test-results
+              cat virtual_workspace/test-results/appium_results.xml
+
         - store_test_results:
             path: virtual_workspace/test-results
 
