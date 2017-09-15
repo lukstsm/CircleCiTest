@@ -169,5 +169,5 @@ if __name__ == '__main__':
 
     logger.info('Retrieving Appium results xml for ci storage...')
     appium_results_url = get_appium_results_url(test_run_arn)
-    save_remote_file(appium_results_url, 'appium_results.xml')
+    save_remote_file(appium_results_url, 'test-results/appium_results.xml')
     logger.info('Done')
