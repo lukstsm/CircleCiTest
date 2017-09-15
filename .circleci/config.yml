@@ -129,6 +129,10 @@ jobs:
         - store_test_results:
             path: virtual_workspace/test-results
 
+        - store_artifacts:
+            path: virtual_workspace/test-results
+            destination: appium
+
   upload:
       docker:
         # Required, any image will do
